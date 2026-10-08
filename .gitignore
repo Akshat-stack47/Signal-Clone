@@ -1,0 +1,7 @@
+# git root ignore
+.git/
+*.log
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
