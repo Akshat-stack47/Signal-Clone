@@ -9,11 +9,11 @@ interface ToastProps {
 }
 
 export default function Toast({ message, type = 'info', onClose, duration = 3000 }: ToastProps) {
-  const timer = useRef<ReturnType<typeof setTimeout>>();
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     timer.current = setTimeout(onClose, duration);
-    return () => clearTimeout(timer.current);
+    return () => { if (timer.current) clearTimeout(timer.current); };
   }, [onClose, duration]);
 
   const bg =

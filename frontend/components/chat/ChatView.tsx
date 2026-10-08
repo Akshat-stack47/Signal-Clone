@@ -39,7 +39,7 @@ export default function ChatView({ conversation, onBack }: Props) {
   const [emojiPickerMsgId, setEmojiPickerMsgId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const typingTimer = useRef<ReturnType<typeof setTimeout>>();
+  const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isTypingRef = useRef(false);
 
   const convMessages = messages[conversation.id] || [];

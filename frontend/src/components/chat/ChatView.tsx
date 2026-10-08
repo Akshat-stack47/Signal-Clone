@@ -1,9 +1,10 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Message, Conversation } from '@/types';
+import { Message, Conversation, User } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useChat } from '@/contexts/ChatContext';
 import { wsClient } from '@/lib/websocket';
+import { usersApi, groupsApi } from '@/lib/api';
 import Avatar from '@/components/ui/Avatar';
 import MessageStatus from '@/components/ui/MessageStatus';
 
@@ -40,7 +41,7 @@ export default function ChatView({ conversation, onBack }: ChatViewProps) {
   const [showGroupInfo, setShowGroupInfo] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const typingTimer = useRef<ReturnType<typeof setTimeout>>();
+  const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isTyping = useRef(false);
 
   const convMessages = messages[conversation.id] || [];
@@ -353,8 +354,6 @@ export default function ChatView({ conversation, onBack }: ChatViewProps) {
 
 // ─── Group Info Panel ───────────────────────────────────────────────────────
 
-import { groupsApi } from '@/lib/api';
-
 function GroupInfoPanel({ conversation, onClose }: { conversation: Conversation; onClose: () => void }) {
   const { user } = useAuth();
   const { refreshConversations } = useChat();
@@ -380,7 +379,7 @@ function GroupInfoPanel({ conversation, onClose }: { conversation: Conversation;
     setAdding(true);
     try {
       const users = await usersApi.list(addUsername);
-      const found = users.find((u) => u.username === addUsername.trim());
+      const found = users.find((u: User) => u.username === addUsername.trim());
       if (!found) { setToast('User not found'); return; }
       await groupsApi.addMember(conversation.id, found.id);
       setToast('Member added');
